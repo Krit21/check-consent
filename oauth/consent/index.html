@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://esm.sh; style-src 'unsafe-inline'; connect-src https://sycimszumiigmkdidgzm.supabase.co https://esm.sh; base-uri 'none'; form-action 'none'">
+  <title>Connect to Check</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #f7f7f7; color: #202020; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
+    main { width: min(100%, 440px); padding: 32px; border: 1px solid #e9e9e9; border-radius: 24px; background: #fff; }
+    h1 { margin: 0 0 12px; font-size: 28px; letter-spacing: -.03em; }
+    p { color: #666; line-height: 1.5; overflow-wrap: anywhere; }
+    button { padding: 14px 18px; border: 0; border-radius: 14px; font: inherit; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; }
+    .primary { background: #202020; color: #fff; }
+    .secondary, #providers button { background: #f3f3f3; color: #202020; }
+    .actions { display: flex; gap: 12px; margin-top: 24px; }
+    #providers { display: grid; gap: 10px; margin-top: 20px; }
+    #providers button { text-align: left; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Connect to Check</h1>
+    <p id="status" role="status">Loading request…</p>
+    <div id="providers" hidden>
+      <button type="button" id="apple">Continue with Apple</button>
+      <button type="button" id="google">Continue with Google</button>
+    </div>
+    <div id="details" hidden>
+      <p id="client"></p>
+      <p id="scope"></p>
+      <p id="redirect"></p>
+      <div class="actions">
+        <button type="button" class="primary" id="approve">Allow access</button>
+        <button type="button" class="secondary" id="deny">Deny</button>
+      </div>
+    </div>
+  </main>
+  <script type="module" src="./client.js"></script>
+</body>
+</html>
