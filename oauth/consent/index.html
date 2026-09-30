@@ -16,8 +16,9 @@
     .primary { background: #202020; color: #fff; }
     .secondary, #providers button { background: #f3f3f3; color: #202020; }
     .actions { display: flex; gap: 12px; margin-top: 24px; }
-    #providers { display: grid; gap: 10px; margin-top: 20px; }
+    #providers, #email-auth, #recovery { display: grid; gap: 10px; margin-top: 20px; }
     #providers button { text-align: left; }
+    input { width: 100%; padding: 13px 14px; border: 1px solid #dedede; border-radius: 12px; font: inherit; }
     [hidden] { display: none !important; }
   </style>
 </head>
@@ -28,6 +29,17 @@
     <div id="providers" hidden>
       <button type="button" id="apple">Continue with Apple</button>
       <button type="button" id="google">Continue with Google</button>
+      <div id="email-auth">
+        <input id="email" type="email" autocomplete="email" placeholder="Email" aria-label="Email">
+        <input id="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
+        <button type="button" class="primary" id="email-login">Sign in with email</button>
+        <button type="button" class="secondary" id="email-signup">Create account</button>
+        <button type="button" class="secondary" id="email-recovery">Forgot password?</button>
+      </div>
+    </div>
+    <div id="recovery" hidden>
+      <input id="new-password" type="password" autocomplete="new-password" placeholder="New password" aria-label="New password">
+      <button type="button" class="primary" id="set-password">Set new password</button>
     </div>
     <div id="details" hidden>
       <p id="client"></p>

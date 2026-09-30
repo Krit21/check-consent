@@ -14,8 +14,31 @@ async function main() {
   if (!response.ok) throw new Error('Check sign-in is temporarily unavailable.');
   const config = await response.json();
   const supabase = createClient(config.url, config.publishableKey);
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError) throw userError;
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  let user = null;
+  if (session) {
+    const result = await supabase.auth.getUser();
+    if (result.error) throw result.error;
+    user = result.data.user;
+  }
+
+  if (new URLSearchParams(location.search).get('recovery') === '1') {
+    if (!user) throw new Error('The password reset link has expired. Request a new one.');
+    $('status').textContent = 'Choose a new password for Check.';
+    $('recovery').hidden = false;
+    $('set-password').onclick = async () => {
+      const password = $('new-password').value;
+      if (!password) return;
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) { $('status').textContent = error.message; return; }
+      const next = new URL(location.href);
+      next.searchParams.delete('recovery');
+      next.searchParams.delete('code');
+      location.assign(next);
+    };
+    return;
+  }
 
   if (!user) {
     $('status').textContent = 'Sign in to approve this connection.';
@@ -26,6 +49,31 @@ async function main() {
         if (error) $('status').textContent = error.message;
       };
     }
+    $('email-login').onclick = async () => {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: $('email').value.trim(), password: $('password').value
+      });
+      if (error) { $('status').textContent = error.message; return; }
+      location.reload();
+    };
+    $('email-signup').onclick = async () => {
+      const { data, error } = await supabase.auth.signUp({
+        email: $('email').value.trim(), password: $('password').value,
+        options: { emailRedirectTo: location.href }
+      });
+      if (error) { $('status').textContent = error.message; return; }
+      if (data.session) { location.reload(); return; }
+      $('status').textContent = 'Check your email to confirm your account, then return here.';
+    };
+    $('email-recovery').onclick = async () => {
+      const redirectTo = new URL(location.href);
+      redirectTo.searchParams.set('recovery', '1');
+      const { error } = await supabase.auth.resetPasswordForEmail($('email').value.trim(), {
+        redirectTo: redirectTo.toString()
+      });
+      $('status').textContent = error ? error.message :
+        'If an account exists for that address, check your email for a reset link.';
+    };
     return;
   }
 
